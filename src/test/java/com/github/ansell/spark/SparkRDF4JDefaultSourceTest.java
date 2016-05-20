@@ -12,6 +12,7 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.sources.BaseRelation;
 import org.apache.spark.sql.types.StructType;
+import org.apache.spark.storage.StorageLevel;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
@@ -44,7 +45,7 @@ public class SparkRDF4JDefaultSourceTest {
 
 	@Before
 	public void setUp() throws Exception {
-		testQuery = "select DISTINCT ?s where { GRAPH <http://bio2rdf.org/hgnc_resource:bio2rdf.dataset.hgnc.R3> { ?s a <http://bio2rdf.org/hgnc.symbol_vocabulary:Resource> . } } LIMIT 100";
+		testQuery = "select DISTINCT ?s where { GRAPH <http://bio2rdf.org/hgnc_resource:bio2rdf.dataset.hgnc.R3> { ?s a <http://bio2rdf.org/hgnc.symbol_vocabulary:Resource> . } } LIMIT 1000";
 		testServer = "http://hgnc.bio2rdf.org/sparql";
 	}
 
@@ -60,7 +61,9 @@ public class SparkRDF4JDefaultSourceTest {
 
 	@Test
 	public final void testCreateRelationSQLContextMapOfStringStringStructType() {
-
+		
+		System.out.println("Starting test body");
+		
 		Map<String, String> parameters = new HashMap<>();
 
 		parameters.put("service", testServer);
@@ -76,14 +79,21 @@ public class SparkRDF4JDefaultSourceTest {
 		String[] fieldNames = schema.fieldNames();
 		assertEquals(1, fieldNames.length);
 
-		JavaRDD<Row> myRDD = createRelation.buildScan().toJavaRDD();
-		assertEquals(100, myRDD.count());
+		long startRDD = System.nanoTime();
+		JavaRDD<Row> myRDD = createRelation.buildScan().toJavaRDD().persist(StorageLevel.MEMORY_ONLY());
+		System.out.println("Time required to build RDD: " + (System.nanoTime() - startRDD)/1_000_000);
+		long startCount = System.nanoTime();
+		assertEquals(1000, myRDD.count());
+		System.out.println("Time required to count: " + (System.nanoTime() - startCount)/1_000_000);
 
-		myRDD.foreachAsync(r -> {
+		myRDD.foreach(r -> {
 			System.out.println(r);
 			String uri = r.getString(0);
 			assertFalse("Found an empty result", uri.trim().isEmpty());
+			assertTrue("Found unexpected result: " + uri, uri.startsWith("http://bio2rdf.org/hgnc.symbol:"));
 		});
+		
+		System.out.println("Returning from test body");
 	}
 
 	@Ignore("TODO: Implement me")
