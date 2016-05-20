@@ -37,10 +37,10 @@ public class SparkRDF4JDefaultSource implements RelationProvider, SchemaRelation
 		Map<String, String> parameters = JavaConversions.asJavaMap(scalaParameters);
 		String service = Optional.ofNullable(parameters.get("service")).orElseThrow(() -> new RuntimeException(
 				"Spark RDF4J Sparql requires a SPARQL 'service' to be specified in the parameters"));
+		String query = Optional.ofNullable(parameters.get("query")).orElseThrow(() -> new RuntimeException(
+				"Spark RDF4J Sparql requires a 'query' to be specified in the parameters"));
 
 		try {
-			String query = Optional.ofNullable(parameters.get("query")).orElseThrow(() -> new RuntimeException(
-					"Spark RDF4J Sparql requires a 'query' to be specified in the parameters"));
 			ParsedQuery parsedQuery = QueryParserUtil.parseQuery(QueryLanguage.SPARQL, query, null);
 			if(!(parsedQuery instanceof ParsedTupleQuery)) {
 				throw new RuntimeException("Spark RDF4J can only be used with Tuple (Select) queries right now.");

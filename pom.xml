@@ -10,7 +10,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
 		<rdf4j.version>2.0M1</rdf4j.version>
 
 		<!-- IMPORTANT: Sensitive to changes at patch(!!!) version level, must 
