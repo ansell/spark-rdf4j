@@ -1,5 +1,8 @@
 language: java
 sudo: required
+env:
+  global:
+    JAVA_OPTS=-Xmx4g
 jdk:
   - oraclejdk8
 notifications:
