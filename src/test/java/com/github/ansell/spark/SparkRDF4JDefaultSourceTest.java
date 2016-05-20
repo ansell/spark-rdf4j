@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.spark.SparkContext;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.rdd.RDD;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
@@ -70,8 +71,12 @@ public class SparkRDF4JDefaultSourceTest {
 				scalaParameters);
 		assertNotNull(createRelation);
 
-		RDD<Row> myRDD = createRelation.buildScan();
+		JavaRDD<Row> myRDD = createRelation.buildScan().toJavaRDD();
 		assertEquals(100, myRDD.count());
+
+		myRDD.foreachAsync(r -> {
+			System.out.println(r);
+		});
 	}
 
 	@Ignore("TODO: Implement me")

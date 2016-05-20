@@ -77,10 +77,11 @@ public class SparkRDF4JSparqlRelation extends BaseRelation implements TableScan 
 			// These bindings are guaranteed to be present and are not nullable
 			Set<String> assuredBindingNames = this.queryField.getTupleExpr().getAssuredBindingNames();
 			// If bindings are only in the following they are nullable
+			Set<String> bindingNames = this.queryField.getTupleExpr().getBindingNames();
 			StructType result = new StructType();
-			this.queryField.getTupleExpr().getBindingNames().forEach(binding -> {
-				result.add(binding, DataTypes.StringType, !(assuredBindingNames.contains(binding)));
-			});
+			for(String binding : bindingNames) {
+				result = result.add(binding, DataTypes.StringType, !(assuredBindingNames.contains(binding)));
+			};
 			return result;
 		});
 		this.sqlContextField = sqlContext;
