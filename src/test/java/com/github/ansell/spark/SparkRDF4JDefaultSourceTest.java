@@ -11,6 +11,7 @@ import org.apache.spark.rdd.RDD;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.sources.BaseRelation;
+import org.apache.spark.sql.types.StructType;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
 import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
@@ -70,12 +71,18 @@ public class SparkRDF4JDefaultSourceTest {
 		SparkRDF4JSparqlRelation createRelation = new SparkRDF4JDefaultSource().createRelation(sqlContext,
 				scalaParameters);
 		assertNotNull(createRelation);
+		StructType schema = createRelation.schema();
+		assertNotNull(schema);
+		String[] fieldNames = schema.fieldNames();
+		assertEquals(1, fieldNames.length);
 
 		JavaRDD<Row> myRDD = createRelation.buildScan().toJavaRDD();
 		assertEquals(100, myRDD.count());
 
 		myRDD.foreachAsync(r -> {
 			System.out.println(r);
+			String uri = r.getString(0);
+			assertFalse("Found an empty result", uri.trim().isEmpty());
 		});
 	}
 
