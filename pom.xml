@@ -29,7 +29,7 @@
 		<parquet.version>1.8.1</parquet.version>
 		<!-- IMPORTANT: Sensitive to changes at the minor version level, must match 
 			Spark Cluster Server version at minor level to function -->
-		<hadoop.version>2.6.4</hadoop.version>
+		<hadoop.version>2.7.0</hadoop.version>
 		<avro.version>1.8.0</avro.version>
 		<chill.version>0.8.0</chill.version>
 		<netty3.version>3.10.5.Final</netty3.version>
