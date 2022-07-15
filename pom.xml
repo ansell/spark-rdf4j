@@ -23,7 +23,7 @@
 		<!-- IMPORTANT: Sensitive to changes at the minor version level, must match 
 			Spark Cluster Server version at minor level to function -->
 		<spark.version>1.6.1</spark.version>
-		<jackson.version>2.7.3</jackson.version>
+		<jackson.version>2.12.6.1</jackson.version>
 		<old-jackson.version>1.9.13</old-jackson.version>
 		<tachyon.version>0.8.2</tachyon.version>
 		<parquet.version>1.8.1</parquet.version>
